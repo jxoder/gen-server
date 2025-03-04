@@ -32,6 +32,15 @@
         "tsConfigPath": "libs/database/tsconfig.lib.json"
       }
     },
+    "gpu-app": {
+      "type": "application",
+      "root": "apps/gpu-app",
+      "entryFile": "main",
+      "sourceRoot": "apps/gpu-app/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/gpu-app/tsconfig.app.json"
+      }
+    },
     "main-app": {
       "type": "application",
       "root": "apps/main-app",
@@ -39,6 +48,15 @@
       "sourceRoot": "apps/main-app/src",
       "compilerOptions": {
         "tsConfigPath": "apps/main-app/tsconfig.app.json"
+      }
+    },
+    "rmq": {
+      "type": "library",
+      "root": "libs/rmq",
+      "entryFile": "index",
+      "sourceRoot": "libs/rmq/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/rmq/tsconfig.lib.json"
       }
     },
     "settings": {

@@ -44,6 +44,12 @@
       "@slibs/database/*": [
         "libs/database/src/*"
       ],
+      "@slibs/rmq": [
+        "libs/rmq/src"
+      ],
+      "@slibs/rmq/*": [
+        "libs/rmq/src/*"
+      ],
       "@slibs/settings": [
         "libs/settings/src"
       ],

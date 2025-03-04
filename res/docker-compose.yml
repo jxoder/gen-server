@@ -8,3 +8,15 @@ services:
       - /var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
+
+  rabbitmq:
+    image: rabbitmq:4.0-management
+    container_name: rabbitmq_4_0
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - /var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password
