@@ -17,7 +17,7 @@ import { UserControllerV1 } from './user'
     DatabaseModule.forRoot(),
     UserModule,
     SettingsModule.forRoot(),
-    RmqModule,
+    RmqModule.registerClient('GPU_SERVICE'),
   ],
   controllers: [
     AuthController,
