@@ -62,6 +62,18 @@ export class RmqModule {
                 prefetchCount: config.PREFETCH_COUNT, // concurrency
                 noAck: false, // 명시적으로 false 선언해야 ack 전송시 406 에러 안남.
                 queueOptions: { durable: true }, // is disk persistence
+                serializer: {
+                  serialize: (value: any) => {
+                    console.log(value)
+                    return value
+                  },
+                },
+                deserializer: {
+                  deserialize(value, options) {
+                    console.log(value)
+                    return value
+                  },
+                },
               },
             } as RmqOptions
           },
