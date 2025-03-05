@@ -9,12 +9,13 @@ import {
   rmqClientConfig,
   rmqWorkerConfig,
 } from './config'
+import { RmqNameType } from './constans'
 
 export const RMQ_WORKER_OPTIONS = 'RMQ_WORKER_OPTIONS'
 
 @Module({})
 export class RmqModule {
-  static registerClient(queueName: string): DynamicModule {
+  static registerClient(queueName: RmqNameType): DynamicModule {
     return {
       module: RmqModule,
       imports: [
@@ -42,7 +43,7 @@ export class RmqModule {
     }
   }
 
-  static registerWorker(queueName: string): DynamicModule {
+  static registerWorker(queueName: RmqNameType): DynamicModule {
     return {
       module: this,
       imports: [ConfigModule.forFeature(rmqWorkerConfig)],
@@ -62,18 +63,20 @@ export class RmqModule {
                 prefetchCount: config.PREFETCH_COUNT, // concurrency
                 noAck: false, // 명시적으로 false 선언해야 ack 전송시 406 에러 안남.
                 queueOptions: { durable: true }, // is disk persistence
-                serializer: {
-                  serialize: (value: any) => {
-                    console.log(value)
-                    return value
-                  },
-                },
-                deserializer: {
-                  deserialize(value, options) {
-                    console.log(value)
-                    return value
-                  },
-                },
+
+                // TODO: serializer 와 deserializer 를 사용하여 메시지 직렬화 및 역직렬화 처리하여 안정성 확보하기
+                // serializer: {
+                //   serialize: (value: any) => {
+                //     console.log(value)
+                //     return value
+                //   },
+                // },
+                // deserializer: {
+                //   deserialize(value, options) {
+                //     console.log(value)
+                //     return value
+                //   },
+                // },
               },
             } as RmqOptions
           },

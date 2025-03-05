@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { ApiModule } from '@slibs/api'
 import { CommonModule } from '@slibs/common'
 import { DatabaseModule } from '@slibs/database'
-import { RmqModule } from '@slibs/rmq'
+import { RMQ_NAME, RmqModule } from '@slibs/rmq'
 import { SettingsModule } from '@slibs/settings'
 import { UserModule } from '@slibs/user'
 import { AuthController, EmailAccountController } from './auth'
@@ -17,7 +17,7 @@ import { UserControllerV1 } from './user'
     DatabaseModule.forRoot(),
     UserModule,
     SettingsModule.forRoot(),
-    RmqModule.registerClient('GPU_SERVICE'),
+    RmqModule.registerClient(RMQ_NAME.GPU_SERVICE),
   ],
   controllers: [
     AuthController,

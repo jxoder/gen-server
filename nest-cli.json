@@ -5,6 +5,15 @@
     "webpack": true
   },
   "projects": {
+    "ai-image": {
+      "type": "library",
+      "root": "libs/ai-image",
+      "entryFile": "index",
+      "sourceRoot": "libs/ai-image/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/ai-image/tsconfig.lib.json"
+      }
+    },
     "api": {
       "type": "library",
       "root": "libs/api",

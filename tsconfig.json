@@ -26,6 +26,12 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "paths": {
+      "@slibs/ai-image": [
+        "libs/ai-image/src"
+      ],
+      "@slibs/ai-image/*": [
+        "libs/ai-image/src/*"
+      ],
       "@slibs/api": [
         "libs/api/src"
       ],
