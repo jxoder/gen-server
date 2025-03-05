@@ -6,12 +6,20 @@ import {
 } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core'
+import { NestjsFormDataModule } from 'nestjs-form-data'
 import { apiConfig } from './config'
 import { HealthModule } from './health'
 import { HttpExceptionFilter, RouteLoggerInterceptor } from './provider'
 
 @Module({
-  imports: [ConfigModule.forFeature(apiConfig), HealthModule],
+  imports: [
+    ConfigModule.forFeature(apiConfig),
+    HealthModule,
+    NestjsFormDataModule.config({
+      isGlobal: true,
+      limits: { fileSize: 500 * 1024 * 1024 }, // 500MB
+    }),
+  ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: RouteLoggerInterceptor },

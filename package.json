@@ -33,6 +33,7 @@
     "env-var": "7.5.0",
     "express": "4.21.2",
     "jsonwebtoken": "9.0.2",
+    "nestjs-form-data": "1.9.93",
     "passport": "0.7.0",
     "passport-custom": "1.1.1",
     "pg": "8.13.1",
