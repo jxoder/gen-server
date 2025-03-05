@@ -5,6 +5,7 @@ import { DatabaseModule } from '@slibs/database'
 import { RMQ_NAME, RmqModule } from '@slibs/rmq'
 import { SettingsModule } from '@slibs/settings'
 import { UserModule } from '@slibs/user'
+import { AiImageControllerV1 } from './ai-image'
 import { AuthController, EmailAccountController } from './auth'
 import { SettingsController } from './settings'
 import { TestController } from './test.controller'
@@ -25,6 +26,7 @@ import { UserControllerV1 } from './user'
     UserControllerV1,
     SettingsController,
     TestController,
+    AiImageControllerV1,
   ],
 })
 export class MainAppModule {}
