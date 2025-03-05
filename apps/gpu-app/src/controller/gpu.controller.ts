@@ -10,7 +10,8 @@ export class GpuController {
   @MessagePattern('test')
   async handleTest(@Payload() data: any, @Ctx() context: RmqContext) {
     console.log('메시지 수신:', data)
-    await this.comfyuiService.t()
+    const res = await this.comfyuiService.t()
+    console.log(1414, res)
 
     // 메시지 처리 로직
 
@@ -19,6 +20,6 @@ export class GpuController {
     const originalMessage = context.getMessage() as amqplib.ConsumeMessage
     channel.ack(originalMessage)
 
-    return { ok: data }
+    return { ok: data, res }
   }
 }

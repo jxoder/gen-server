@@ -1,11 +1,12 @@
-import { Logger } from '@nestjs/common'
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter'
+import { Injectable, Logger } from '@nestjs/common'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { catchError, defer, lastValueFrom, retry, timer } from 'rxjs'
 import { WebSocket } from 'ws'
 import { ComfyUIWsEvent } from '../types'
 
 export const COMFYUI_CLIENT_TOKEN = 'COMFYUI_CLIENT_TOKEN'
 
+@Injectable()
 export class ComfyUIClient {
   private logger = new Logger(this.constructor.name)
   protected ws?: WebSocket
@@ -20,13 +21,6 @@ export class ComfyUIClient {
 
   get isConnected() {
     return !!this.ws
-  }
-
-  async ensureConnect() {
-    if (this.isConnected) {
-      return
-    }
-    await this.connect()
   }
 
   async connect(retryCount = 3, delay = 1000) {
@@ -56,13 +50,12 @@ export class ComfyUIClient {
       socket.on('open', () => {
         this.ws = socket
         this.logger.log('Connected to ComfyUI')
-        this.emit('comfyui.message', 'ok')
         resolve(null)
       })
 
       socket.on('close', () => {
         this.ws = undefined
-        this.logger.error('Disconnected from ComfyUI')
+        this.emit('comfyui.close', 'Disconnected from ComfyUI')
         reject(new Error('Disconnected from ComfyUI'))
       })
 
@@ -72,18 +65,12 @@ export class ComfyUIClient {
       })
 
       socket.on('message', data => {
-        this.eventEmitter.emit('comfyui.message', data)
-        console.log(this.emit('comfyui.message', data))
+        this.emit('comfyui.message', data)
       })
     })
   }
 
-  private emit(event: ComfyUIWsEvent, data: any) {
-    return this.eventEmitter.emit(event, data)
-  }
-
-  @OnEvent('comfyui.message')
-  onMessage(data: any) {
-    console.log(data)
+  private async emit(event: ComfyUIWsEvent, data: any) {
+    this.eventEmitter.emit(event, data)
   }
 }

@@ -8,7 +8,7 @@ import { ComfyUIService } from './service'
 @Module({
   imports: [
     ConfigModule.forFeature(comfyuiConfig),
-    EventEmitterModule.forRoot(),
+    EventEmitterModule.forRoot({ global: false }),
   ],
   providers: [
     {
