@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common'
+import { ComfyUIModule } from '@slibs/comfyui'
+import { CommonModule } from '@slibs/common'
 import { RmqModule } from '@slibs/rmq'
 import { GpuController } from './controller'
 
 @Module({
-  imports: [RmqModule.registerWorker('GPU_SERVICE')],
+  imports: [
+    CommonModule,
+    RmqModule.registerWorker('GPU_SERVICE'),
+    ComfyUIModule,
+  ],
   controllers: [GpuController],
   providers: [],
 })

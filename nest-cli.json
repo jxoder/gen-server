@@ -23,6 +23,15 @@
         "tsConfigPath": "libs/api/tsconfig.lib.json"
       }
     },
+    "comfyui": {
+      "type": "library",
+      "root": "libs/comfyui",
+      "entryFile": "index",
+      "sourceRoot": "libs/comfyui/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/comfyui/tsconfig.lib.json"
+      }
+    },
     "common": {
       "type": "library",
       "root": "libs/common",

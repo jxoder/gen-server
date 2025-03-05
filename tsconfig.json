@@ -38,6 +38,12 @@
       "@slibs/api/*": [
         "libs/api/src/*"
       ],
+      "@slibs/comfyui": [
+        "libs/comfyui/src"
+      ],
+      "@slibs/comfyui/*": [
+        "libs/comfyui/src/*"
+      ],
       "@slibs/common": [
         "libs/common/src"
       ],

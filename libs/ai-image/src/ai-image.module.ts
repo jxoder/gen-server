@@ -1,8 +1,19 @@
 import { Module } from '@nestjs/common'
-import { RmqModule } from '@slibs/rmq'
-import { RMQ_NAME } from '@slibs/rmq/constans'
+import { RMQ_NAME, RmqModule } from '@slibs/rmq'
 
-@Module({
-  imports: [RmqModule.registerClient(RMQ_NAME.GPU_SERVICE)],
-})
-export class AiImageModule {}
+@Module({})
+export class AiImageModule {
+  static publisher() {
+    return {
+      module: this,
+      imports: [RmqModule.registerClient(RMQ_NAME.GPU_SERVICE)],
+    }
+  }
+
+  static consumer() {
+    return {
+      module: this,
+      imports: [],
+    }
+  }
+}
