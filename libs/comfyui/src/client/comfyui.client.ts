@@ -1,8 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
+import { RandomUtils } from '@slibs/common'
+import axios, { AxiosRequestConfig } from 'axios'
 import { catchError, defer, lastValueFrom, retry, timer } from 'rxjs'
 import { WebSocket } from 'ws'
-import { ComfyUIWsEvent } from '../types'
+import {
+  ComfyUIFileOutPutType,
+  ComfyUIWorkflowType,
+  ComfyUIWsEvent,
+  IComfyUIWorkflowHistory,
+} from '../types'
 
 export const COMFYUI_CLIENT_TOKEN = 'COMFYUI_CLIENT_TOKEN'
 
@@ -16,7 +23,7 @@ export class ComfyUIClient {
     private readonly eventEmitter: EventEmitter2,
     private readonly options: { host: string; port: number },
   ) {
-    this.ID = 'random-id'
+    this.ID = RandomUtils.uuidV4()
   }
 
   get isConnected() {
@@ -43,7 +50,7 @@ export class ComfyUIClient {
 
   private async connectToComfyUIServer() {
     const socket = new WebSocket(
-      `ws://${this.options.host}:${this.options.port}/ws?client_id=${this.ID}`,
+      `ws://${this.options.host}:${this.options.port}/ws?clientId=${this.ID}`,
     )
 
     await new Promise((resolve, reject) => {
@@ -72,5 +79,50 @@ export class ComfyUIClient {
 
   private async emit(event: ComfyUIWsEvent, data: any) {
     this.eventEmitter.emit(event, data)
+  }
+
+  async prompt(workflow: ComfyUIWorkflowType) {
+    return this.postAPI<{
+      prompt_id: string
+      number: number
+      node_errors: unknown
+    }>('/prompt', workflow)
+  }
+
+  async getHistory(promptId?: string) {
+    const url = promptId ? `/history/${promptId}` : '/history'
+    return this.getAPI<{ [promptId: string]: IComfyUIWorkflowHistory }>(url)
+  }
+
+  async getFileBuffer(
+    filename: string,
+    type: ComfyUIFileOutPutType,
+    subfolder?: string,
+  ): Promise<Buffer> {
+    return this.getAPI<Buffer>(
+      `/view?filename=${filename}&type=${type}&subfolder=${subfolder ?? ''}`,
+      { responseType: 'arraybuffer' },
+    )
+  }
+
+  private async getAPI<RESPONSE>(url: string, config?: AxiosRequestConfig) {
+    const res = await axios.get<RESPONSE>(
+      `http://${this.options.host}:${this.options.port}${url}`,
+      config,
+    )
+    return res.data
+  }
+
+  private async postAPI<RESPONSE, PAYLOAD = any>(
+    url: string,
+    data: PAYLOAD,
+    config?: AxiosRequestConfig,
+  ): Promise<RESPONSE> {
+    const res = await axios.post<RESPONSE>(
+      `http://${this.options.host}:${this.options.port}${url}`,
+      data,
+      config,
+    )
+    return res.data
   }
 }
