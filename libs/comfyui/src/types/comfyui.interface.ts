@@ -7,6 +7,7 @@ export type ComfyUIWsEvent = `comfyui.${WS_EVENT_NAME}`
  */
 
 type StringLikeNumber = string
+export type ComfyUIModelType = 'checkpoint' | 'loras'
 export type ComfyUIFileOutPutType = 'temp' | 'output'
 export type ComfyUIFileType = {
   type: ComfyUIFileOutPutType

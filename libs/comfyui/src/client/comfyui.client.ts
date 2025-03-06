@@ -6,6 +6,7 @@ import { catchError, defer, lastValueFrom, retry, timer } from 'rxjs'
 import { WebSocket } from 'ws'
 import {
   ComfyUIFileOutPutType,
+  ComfyUIModelType,
   ComfyUIWorkflowType,
   ComfyUIWsEvent,
   IComfyUIWorkflowHistory,
@@ -77,8 +78,8 @@ export class ComfyUIClient {
     })
   }
 
-  private async emit(event: ComfyUIWsEvent, data: any) {
-    this.eventEmitter.emit(event, data)
+  async getModels(type: ComfyUIModelType) {
+    return this.getAPI<Array<string>>(`/models/${type}`)
   }
 
   async prompt(workflow: ComfyUIWorkflowType) {
@@ -94,6 +95,11 @@ export class ComfyUIClient {
     return this.getAPI<{ [promptId: string]: IComfyUIWorkflowHistory }>(url)
   }
 
+  async clearHistory(promptId?: string) {
+    const payload = promptId ? { prompt_id: promptId } : {}
+    await this.postAPI('/history', payload)
+  }
+
   async getFileBuffer(
     filename: string,
     type: ComfyUIFileOutPutType,
@@ -103,6 +109,18 @@ export class ComfyUIClient {
       `/view?filename=${filename}&type=${type}&subfolder=${subfolder ?? ''}`,
       { responseType: 'arraybuffer' },
     )
+  }
+
+  async freeVram(): Promise<void> {
+    await this.postAPI('/free', { free_memory: true })
+  }
+
+  async interrupt(): Promise<void> {
+    await this.postAPI('/interrupt', {})
+  }
+
+  private async emit(event: ComfyUIWsEvent, data: any) {
+    this.eventEmitter.emit(event, data)
   }
 
   private async getAPI<RESPONSE>(url: string, config?: AxiosRequestConfig) {
