@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common'
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices'
-import { ComfyUIService, ComfyWorkflow } from '@slibs/comfyui'
+import { ComfyUIService } from '@slibs/comfyui'
 import * as amqplib from 'amqplib'
 
 @Controller()
@@ -12,10 +12,12 @@ export class GpuController {
     const channel: amqplib.Channel = context.getChannelRef()
     const originalMessage = context.getMessage() as amqplib.ConsumeMessage
     try {
-      const prompt = await ComfyWorkflow.get('SDXL_BASIC', data)
-      const res = await this.comfyuiService.invoke(prompt)
+      console.log(`run process`)
+      await new Promise(resolve => setTimeout(resolve, 3000))
+      // const prompt = await ComfyWorkflow.get('SDXL_BASIC', data)
+      // const res = await this.comfyuiService.invoke(prompt)
 
-      console.log(1414, res)
+      // console.log(1414, res)
 
       // 메시지 처리 로직
 

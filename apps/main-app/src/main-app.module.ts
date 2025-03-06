@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { ApiModule } from '@slibs/api'
 import { CommonModule } from '@slibs/common'
 import { DatabaseModule } from '@slibs/database'
-import { RMQ_NAME, RmqModule } from '@slibs/rmq'
+import { RMQ_QUEUE, RmqModule } from '@slibs/rmq'
 import { SettingsModule } from '@slibs/settings'
 import { UserModule } from '@slibs/user'
 import { AiImageControllerV1 } from './ai-image'
@@ -18,7 +18,7 @@ import { UserControllerV1 } from './user'
     DatabaseModule.forRoot(),
     UserModule,
     SettingsModule.forRoot(),
-    RmqModule.registerClient(RMQ_NAME.GPU_SERVICE),
+    RmqModule.registerClient(RMQ_QUEUE.GPU_SERVICE),
   ],
   controllers: [
     AuthController,

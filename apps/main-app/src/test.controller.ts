@@ -1,6 +1,5 @@
 import { Controller, Inject, Post } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
-import { lastValueFrom } from 'rxjs'
 
 @Controller('test')
 export class TestController {
@@ -8,9 +7,21 @@ export class TestController {
 
   @Post()
   async test() {
-    const res = await this.proxy.send('test', {
+    // const res = await this.proxy
+    //   .send('test', {
+    //     prompt: 'a photo of a beautiful girl',
+    //   })
+    //   .pipe(
+    //     timeout(5000),
+    //     catchError(err => {
+    //       throw new err()
+    //     }),
+    //   )
+    // console.log(await lastValueFrom(res))
+
+    await this.proxy.emit('test', {
       prompt: 'a photo of a beautiful girl',
     })
-    console.log(await lastValueFrom(res))
+    return { ok: 'ok' }
   }
 }
