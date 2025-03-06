@@ -1,8 +1,7 @@
 import { Controller } from '@nestjs/common'
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices'
-import { ComfyUIService } from '@slibs/comfyui'
+import { ComfyUIService, ComfyWorkflow } from '@slibs/comfyui'
 import * as amqplib from 'amqplib'
-import { TEMP_PROMPT } from './prompt'
 
 @Controller()
 export class GpuController {
@@ -10,17 +9,25 @@ export class GpuController {
 
   @MessagePattern('test')
   async handleTest(@Payload() data: any, @Ctx() context: RmqContext) {
-    console.log('메시지 수신:', data)
-    const res = await this.comfyuiService.invoke(TEMP_PROMPT()).catch(ex => ex)
-    console.log(1414, res)
-
-    // 메시지 처리 로직
-
-    // 처리가 완료된 후 ack 수행
     const channel: amqplib.Channel = context.getChannelRef()
     const originalMessage = context.getMessage() as amqplib.ConsumeMessage
-    channel.ack(originalMessage)
+    try {
+      const prompt = await ComfyWorkflow.get('SDXL_BASIC', data)
+      const res = await this.comfyuiService.invoke(prompt)
 
-    return { ok: data, res }
+      console.log(1414, res)
+
+      // 메시지 처리 로직
+
+      // 처리가 완료된 후 ack 수행
+
+      channel.ack(originalMessage)
+
+      return { ok: data }
+    } catch (ex) {
+      console.error(ex)
+      channel.reject(originalMessage, false)
+      throw ex
+    }
   }
 }
