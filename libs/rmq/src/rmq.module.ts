@@ -37,17 +37,18 @@ export class RmqModule {
     }
   }
 
+  static workerOptions = new Map<string, RmqOptions>()
   static registerWorker(queue: RmqQueueType): DynamicModule {
     return {
       module: this,
       imports: [ConfigModule.forFeature(rmqConfig)],
       providers: [
         {
-          provide: RMQ_WORKER_OPTIONS,
+          provide: `${RMQ_WORKER_OPTIONS}.${queue.name}`,
           inject: [ConfigService],
           useFactory: (configService: ConfigService) => {
             const config = configService.getOrThrow<IRmqConfig>(RMQ_CONFIG_KEY)
-            return {
+            const options = {
               transport: Transport.RMQ,
               options: {
                 ...queue.options,
@@ -55,7 +56,15 @@ export class RmqModule {
                 queue: queue.name,
               },
             } as RmqOptions
+
+            this.workerOptions.set(queue.name, options)
+
+            return options
           },
+        },
+        {
+          provide: RMQ_WORKER_OPTIONS,
+          useFactory: () => this.workerOptions,
         },
       ],
       exports: [

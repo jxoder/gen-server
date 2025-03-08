@@ -13,15 +13,16 @@ export class GpuController {
     const originalMessage = context.getMessage() as amqplib.ConsumeMessage
     try {
       console.log(`run process`)
-      await new Promise(resolve => setTimeout(resolve, 3000))
-      // const prompt = await ComfyWorkflow.get('SDXL_BASIC', data)
+
+      // await new Promise(resolve => setTimeout(resolve, 3000))
+      // await ComfyWorkflow.get('SDXL_BASIC', {
+      //   model: 'SDXL/waiNSFWIllustrious_v110.safetensors',
+      //   prompt: 'a beautiful girl',
+      //   negativePrompt: 'worst quality, low quality',
+      //   width: 400,
+      // })
+
       // const res = await this.comfyuiService.invoke(prompt)
-
-      // console.log(1414, res)
-
-      // 메시지 처리 로직
-
-      // 처리가 완료된 후 ack 수행
 
       channel.ack(originalMessage)
 

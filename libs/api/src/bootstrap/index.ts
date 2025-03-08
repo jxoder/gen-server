@@ -13,7 +13,7 @@ import { setupSwagger } from './swagger.setup'
 export class Bootstrap {
   constructor(private readonly module: any) {}
 
-  async listen() {
+  async listen(additionalFn?: (app: INestApplication) => void) {
     const app = await NestFactory.create<INestApplication>(this.module)
     const configService = app.get(ConfigService)
 
@@ -48,11 +48,11 @@ export class Bootstrap {
 
     setupSwagger(app, apiConfig)
 
-    await app.listen(apiConfig.PORT)
-  }
+    if (additionalFn) {
+      additionalFn(app)
+    }
 
-  async single() {
-    return this.listen()
+    await app.listen(apiConfig.PORT)
   }
 
   async clusterize(nums: number = 2) {

@@ -1,9 +1,28 @@
-import { IsString } from 'class-validator'
-import { ComfyWorkflowBase } from './comfy-workflow.base'
+import { IsEnum, IsPositive, IsString } from 'class-validator'
+import { ComfyUIKSamplerName, ComfyUIKSamplerScheduler } from '../types'
+import {
+  ComfyWorkflowBase,
+  ComfyWorkflowPayloadBase,
+} from './comfy-workflow.base'
 
-class SDXLBasicWorkflowPaylod {
+class SDXLBasicWorkflowPaylod extends ComfyWorkflowPayloadBase {
   @IsString()
-  prompt!: string
+  model!: string
+
+  @IsString()
+  negativePrompt!: string
+
+  @IsPositive()
+  step: number = 15
+
+  @IsPositive()
+  cfg: number = 7
+
+  @IsEnum(ComfyUIKSamplerName)
+  sampler_name: ComfyUIKSamplerName = ComfyUIKSamplerName.EULER_ANCESTRAL
+
+  @IsEnum(ComfyUIKSamplerScheduler)
+  scheduler: ComfyUIKSamplerScheduler = ComfyUIKSamplerScheduler.KARRAS
 }
 
 export class SDXLBasicWorkflow extends ComfyWorkflowBase<SDXLBasicWorkflowPaylod> {
@@ -15,12 +34,16 @@ export class SDXLBasicWorkflow extends ComfyWorkflowBase<SDXLBasicWorkflowPaylod
     return {
       prompt: {
         '4': {
-          inputs: { ckpt_name: 'SDXL/waiNSFWIllustrious_v110.safetensors' },
+          inputs: { ckpt_name: payload.model },
           class_type: 'CheckpointLoaderSimple',
           _meta: { title: '체크포인트 로드' },
         },
         '5': {
-          inputs: { width: 1024, height: 1024, batch_size: 1 },
+          inputs: {
+            width: payload.width,
+            height: payload.height,
+            batch_size: 1,
+          },
           class_type: 'EmptyLatentImage',
           _meta: { title: '빈 잠재 이미지' },
         },
@@ -34,7 +57,7 @@ export class SDXLBasicWorkflow extends ComfyWorkflowBase<SDXLBasicWorkflowPaylod
         },
         '7': {
           inputs: {
-            text: '(jpeg artifacts, 3d, unreal engine 5, unity, frizzy hair, hair split ends, red skin, nsfw, nudity, bad anatomy, bad perspective, bad proportions, bad aspect ratio, 2 faces, plate, glance, ball, looking up, looking to the side, looking down, looking left, looking right, extra digit, bad hands, bad fingers, 3 arm, 3 hands, 6 fingers, neck band, neckless, cleavage, bad anatomy, bad eyes, bad, ugly, watermark, text, overlay, error, username, artist name, getty images, cropped, logo, signature, frame, low quality, normal quality, missing fingers, extra digit, fewer digits, cropped, worst quality, blurry, black and white, 6 fingers:1.2)',
+            text: payload.negativePrompt,
             clip: ['4', 1],
           },
           class_type: 'CLIPTextEncode',
@@ -44,12 +67,12 @@ export class SDXLBasicWorkflow extends ComfyWorkflowBase<SDXLBasicWorkflowPaylod
           inputs: {
             seed:
               Math.floor(Math.random() * (100000000000 - 100000 + 1)) + 100000,
-            steps: 15,
-            cfg: 7,
-            sampler_name: 'euler_ancestral',
-            scheduler: 'karras',
+            steps: payload.step,
+            cfg: payload.cfg,
+            sampler_name: payload.sampler_name,
+            scheduler: payload.scheduler,
             denoise: 1,
-            preview_method: 'auto',
+            preview_method: 'none',
             vae_decode: 'true',
             model: ['4', 0],
             positive: ['6', 0],
