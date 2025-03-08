@@ -9,13 +9,14 @@ import {
   ComfyUIModelType,
   ComfyUIWorkflowType,
   ComfyUIWsEvent,
+  IComfyUIClient,
   IComfyUIWorkflowHistory,
 } from '../types'
 
 export const COMFYUI_CLIENT_TOKEN = 'COMFYUI_CLIENT_TOKEN'
 
 @Injectable()
-export class ComfyUIClient {
+export class ComfyUIClient implements IComfyUIClient {
   private logger = new Logger(this.constructor.name)
   protected ws?: WebSocket
   readonly ID: string

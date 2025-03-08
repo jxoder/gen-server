@@ -2,11 +2,12 @@ import { Inject, Injectable, Logger } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
 import { EventEmitter } from 'stream'
 import { RawData } from 'ws'
-import { COMFYUI_CLIENT_TOKEN, ComfyUIClient } from '../client'
+import { COMFYUI_CLIENT_TOKEN } from '../client'
 import {
   COMFY_UI_WS_MESSAGE_TYPE,
   ComfyUIWorkflowType,
   ComfyUIWsMessage,
+  IComfyUIClient,
   IComfyUIWorkflowHistory,
 } from '../types'
 
@@ -17,7 +18,7 @@ export class ComfyUIService {
   private isTryConnect = false
 
   constructor(
-    @Inject(COMFYUI_CLIENT_TOKEN) private readonly comfyui: ComfyUIClient,
+    @Inject(COMFYUI_CLIENT_TOKEN) private readonly comfyui: IComfyUIClient,
   ) {}
 
   async invoke(workflow: ComfyUIWorkflowType) {

@@ -8,7 +8,12 @@ export class TestController {
   @Post()
   async test() {
     await this.proxy.emit('comfyui.invoke', {
-      prompt: 'a photo of a beautiful girl',
+      type: 'SDXL_BASIC',
+      payload: {
+        model: 'SDXL',
+        prompt: 'a photo of a beautiful girl',
+        negativePrompt: 'low quality, worst quality',
+      },
     })
 
     return { ok: 'ok' }

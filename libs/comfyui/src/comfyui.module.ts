@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { EventEmitter2, EventEmitterModule } from '@nestjs/event-emitter'
-import { COMFYUI_CLIENT_TOKEN, ComfyUIClient } from './client'
+import {
+  COMFYUI_CLIENT_TOKEN,
+  ComfyUIClient,
+  MockComfyUIClient,
+} from './client'
 import { COMFYUI_CONFIG_KEY, comfyuiConfig, IComfyUIConfig } from './config'
 import { ComfyUIService } from './service'
 
@@ -22,10 +26,12 @@ import { ComfyUIService } from './service'
         const config =
           configService.getOrThrow<IComfyUIConfig>(COMFYUI_CONFIG_KEY)
 
-        const client = new ComfyUIClient(eventEmitter, {
-          host: config.HOST,
-          port: config.PORT,
-        })
+        const client = !config?.HOST
+          ? new MockComfyUIClient(eventEmitter)
+          : new ComfyUIClient(eventEmitter, {
+              host: config.HOST,
+              port: config.PORT,
+            })
 
         await client.connect()
         return client

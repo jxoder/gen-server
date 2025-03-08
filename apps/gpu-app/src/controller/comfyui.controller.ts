@@ -1,6 +1,10 @@
 import { Controller } from '@nestjs/common'
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices'
-import { ComfyUIService, ComfyWorkflowType } from '@slibs/comfyui'
+import {
+  ComfyUIService,
+  ComfyWorkflow,
+  ComfyWorkflowType,
+} from '@slibs/comfyui'
 import { RmqConsumerController } from '@slibs/rmq'
 
 @Controller()
@@ -19,11 +23,11 @@ export class ComfyUIController extends RmqConsumerController {
 
       await new Promise(resolve => setTimeout(resolve, 1500))
 
-      //   const prompt = await ComfyWorkflow.get(data.type, data.payload)
-      //   const res = await this.comfyuiService.invoke(prompt)
+      const prompt = await ComfyWorkflow.get(data.type, data.payload)
+      const res = await this.comfyuiService.invoke(prompt)
 
-      //   // TODO: save image to storage
-      //   console.log(res)
+      // TODO: save image to storage
+      console.log(res)
 
       this.ack(context, { ok: 'ok' })
     } catch (ex) {
