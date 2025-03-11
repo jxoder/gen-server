@@ -59,6 +59,15 @@
         "tsConfigPath": "apps/gpu-app/tsconfig.app.json"
       }
     },
+    "mailer": {
+      "type": "library",
+      "root": "libs/mailer",
+      "entryFile": "index",
+      "sourceRoot": "libs/mailer/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/mailer/tsconfig.lib.json"
+      }
+    },
     "main-app": {
       "type": "application",
       "root": "apps/main-app",

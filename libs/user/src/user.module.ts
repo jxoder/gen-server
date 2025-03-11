@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { DatabaseModule } from '@slibs/database'
+import { MailerModule } from '@slibs/mailer'
 import { userConfig } from './config'
 import {
   BearerRefreshTokenEntity,
@@ -23,6 +24,7 @@ import { RefreshTokenStrategy, UserJwtStrategy } from './strategy'
       EmailAccountEntity,
       BearerRefreshTokenEntity,
     ]),
+    MailerModule,
   ],
   providers: [
     UserRepository,

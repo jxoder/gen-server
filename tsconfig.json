@@ -56,6 +56,12 @@
       "@slibs/database/*": [
         "libs/database/src/*"
       ],
+      "@slibs/mailer": [
+        "libs/mailer/src"
+      ],
+      "@slibs/mailer/*": [
+        "libs/mailer/src/*"
+      ],
       "@slibs/rmq": [
         "libs/rmq/src"
       ],
