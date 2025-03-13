@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { ApiModule } from '@slibs/api'
 import { CommonModule } from '@slibs/common'
 import { DatabaseModule } from '@slibs/database'
+import { RedisModule } from '@slibs/redis'
 import { RMQ_QUEUE, RmqModule } from '@slibs/rmq'
 import { SettingsModule } from '@slibs/settings'
 import { UserModule } from '@slibs/user'
@@ -16,6 +17,7 @@ import { UserControllerV1 } from './user'
     CommonModule,
     ApiModule,
     DatabaseModule.forRoot(),
+    RedisModule,
     UserModule,
     SettingsModule.forRoot(),
     RmqModule.registerClient(RMQ_QUEUE.GPU_SERVICE),

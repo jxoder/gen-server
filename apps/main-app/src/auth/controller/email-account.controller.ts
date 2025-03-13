@@ -5,6 +5,7 @@ import { EmailAccountService, UserAuthService } from '@slibs/user'
 import {
   LoginEmailAccountPayload,
   LoginResponse,
+  SendVerifyCodePayload,
   SignEmailAccountPayload,
 } from '../dto'
 
@@ -15,6 +16,15 @@ export class EmailAccountController {
     private readonly emailAccountService: EmailAccountService,
     private readonly userAuthService: UserAuthService,
   ) {}
+
+  @Post('verify')
+  @ApiOperation({ summary: 'send verify code to email' })
+  @ApiResponse({ type: OkResponseDto })
+  async sendVerifyCode(@Body() body: SendVerifyCodePayload) {
+    await this.emailAccountService.sendVerifyCode(body.email)
+
+    return OkResponseDto.from()
+  }
 
   @Post('sign')
   @ApiOperation({ summary: 'sign with email account' })

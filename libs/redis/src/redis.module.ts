@@ -1,10 +1,14 @@
 import { Global, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import { Redis } from 'ioredis'
+import Redis, { RedisOptions } from 'ioredis'
 import { catchError, defer, lastValueFrom, retry, timer } from 'rxjs'
 import { IRedisConfig, REDIS_CONFIG_KEY, redisConfig } from './config'
 
-export class RedisSubscriber extends Redis {}
+export class RedisSubscriber extends Redis {
+  constructor(options: RedisOptions) {
+    super(options)
+  }
+}
 
 @Global()
 @Module({
@@ -22,7 +26,7 @@ export class RedisSubscriber extends Redis {}
           password: config.PASSWORD,
         })
 
-        return lastValueFrom(
+        await lastValueFrom(
           defer(() => redis.connect()).pipe(
             retry({
               count: 3,
@@ -37,6 +41,8 @@ export class RedisSubscriber extends Redis {}
             }),
           ),
         )
+
+        return redis
       },
     },
     {

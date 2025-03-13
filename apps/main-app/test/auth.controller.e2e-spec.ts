@@ -1,5 +1,5 @@
 import { HttpStatus } from '@nestjs/common'
-import { DayUtils, ERROR_MESSAGE, JWTUtils } from '@slibs/common'
+import { DayUtils, ERROR_MESSAGE, JWTUtils, RandomUtils } from '@slibs/common'
 import { ApiClient, tk } from '@slibs/testing'
 import { aa, ba, createClient } from './harness'
 
@@ -12,6 +12,7 @@ const PASSWORD = 'password'
 /**
  * Paths
  */
+const EMAIL_ACCOUNT_VERIFY = '/auth/email-account/verify'
 const EMAIL_ACCOUNT_SIGN = '/auth/email-account/sign'
 const EMAIL_ACCOUNT_LOGIN = '/auth/email-account/login'
 const SELF_USER = '/v1/users/self'
@@ -28,30 +29,78 @@ describe('auth (e2e)', () => {
   })
 
   describe('email-account.controller', () => {
+    describe('POST /auth/email-account/verify', () => {
+      it('verify code & rate limit', async () => {
+        const r = await client.post(EMAIL_ACCOUNT_VERIFY, {
+          email: 'test2@example.com',
+        })
+        r.expectSuccess()
+
+        const r2 = await client.post(EMAIL_ACCOUNT_VERIFY, {
+          email: 'test2@example.com',
+        })
+        r2.expectSuccess()
+
+        const r3 = await client.post(EMAIL_ACCOUNT_VERIFY, {
+          email: 'test2@example.com',
+        })
+        r3.expectSuccess()
+
+        const r4 = await client.post(EMAIL_ACCOUNT_VERIFY, {
+          email: 'test2@example.com',
+        })
+        expect(r4.error.message).toBe(ERROR_MESSAGE.TOO_MANY_REQUESTS)
+
+        tk.travel(DayUtils.getNow().add(4, 'minutes').toDate())
+
+        const r5 = await client.post(EMAIL_ACCOUNT_VERIFY, {
+          email: 'test2@example.com',
+        })
+        r5.expectSuccess()
+      })
+    })
+
     describe('POST /auth/email-account/sign', () => {
+      it('verify code', async () => {
+        jest
+          .spyOn(RandomUtils, 'randomNumberDigits')
+          .mockReturnValueOnce('123456')
+        const r = await client.post(EMAIL_ACCOUNT_VERIFY, { email: EMAIL })
+        r.expectSuccess()
+      })
+
+      it('invalid verify code', async () => {
+        const e = await client.post(EMAIL_ACCOUNT_SIGN, {
+          email: EMAIL,
+          password: PASSWORD,
+          verifyCode: '999999',
+        })
+        expect(e.error.code).toBe(HttpStatus.BAD_REQUEST)
+        expect(e.error.message).toBe(ERROR_MESSAGE.INVALID_VERIFY_CODE)
+      })
+
       it('success sign with email', async () => {
         const r = await client.post(EMAIL_ACCOUNT_SIGN, {
           email: EMAIL,
           password: PASSWORD,
+          verifyCode: '123456',
         })
         r.expectSuccess()
+      })
+
+      it('duplicate email', async () => {
+        const e = await client.post(EMAIL_ACCOUNT_VERIFY, { email: EMAIL })
+        expect(e.error.code).toBe(HttpStatus.CONFLICT)
+        expect(e.error.message).toBe(`DUPLICATED_EMAIL_ACCOUNT`)
       })
 
       it('invalid email format', async () => {
         const e = await client.post(EMAIL_ACCOUNT_SIGN, {
           email: 'invalid-email-format',
           password: PASSWORD,
+          verifyCode: '123456',
         })
         expect(e.error.code).toBe(HttpStatus.BAD_REQUEST)
-      })
-
-      it('duplicate email', async () => {
-        const e = await client.post(EMAIL_ACCOUNT_SIGN, {
-          email: EMAIL,
-          password: PASSWORD,
-        })
-        expect(e.error.code).toBe(HttpStatus.CONFLICT)
-        expect(e.error.message).toBe(`DUPLICATED_EMAIL_ACCOUNT`)
       })
     })
 
